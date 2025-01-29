@@ -1,17 +1,16 @@
 import express from 'express'
-import './config/instrument.js'
 import cors from 'cors'
+import * as Sentry from "@sentry/node"
 import 'dotenv/config'
-import connectDB from './config/db.js'
-import * as Sentry from "@sentry/node" 
-import { clerkWebhooks } from './controller/webhooks.js'
+import '../config/instrument.js'
+import connectDB from '../config/db.js'
+import { clerkWebhooks } from '../controller/webhooks.js'
 
 
 //initialize express
 const app = express()
 
 //connect to database
-
 await connectDB()
 
 
@@ -20,14 +19,14 @@ app.use(cors())
 app.use(express.json())
 
 //routes
-app.get('/', (req,res) => {
-   res.send("API Working")
+app.get('/', (req, res) => {
+   res.send("API Working").status(200)
 })
 // app.get("/debug-sentry", function mainHandler(req, res) {
 //     throw new Error("This is a test error for Sentry!");
 //   });
 
-app.post('/webhooks' , clerkWebhooks)
+app.post('/webhooks', clerkWebhooks)
 
 
 
@@ -36,7 +35,6 @@ const PORT = process.env.PORT || 3000
 
 Sentry.setupExpressErrorHandler(app)
 
-app.listen(PORT ,() => {
+app.listen(PORT, () => {
    console.log(`server is running in the port ${PORT}`);
-   
 })
